@@ -78,8 +78,8 @@ github.com/twitchyliquid64/golang-asm v0.15.1 h1:SU5vSMR7hnwNxj24w34ZyCi/FmDZTkS
 github.com/twitchyliquid64/golang-asm v0.15.1/go.mod h1:a1lVb/DtPvCB8fslRZhAngC2+aY1QWCk3Cedj/Gdt08=
 github.com/ugorji/go/codec v1.2.12 h1:9LC83zGrHhuUA9l16C9AHXAqEV/2wBQ4nkvumAE65EE=
 github.com/ugorji/go/codec v1.2.12/go.mod h1:UNopzCgEMSXjBc6AOMqYvWC1ktqTAfzJZUZgYf6w6lg=
-github.com/xxxsen/common v0.1.28 h1:hFDtKlkzYko44XyVMqKDPboSha8q/vhgL4am2Ae3dkE=
-github.com/xxxsen/common v0.1.28/go.mod h1:EcxAFWxcSEY5fm6vbwONil+XqHPzqVpmbJwHRA7aS/c=
+github.com/xxxsen/common v0.1.29 h1:zLeui2OJWVw+AE/v1Bd3CqZXC+du0nLxsP2qNdeN7lg=
+github.com/xxxsen/common v0.1.29/go.mod h1:EcxAFWxcSEY5fm6vbwONil+XqHPzqVpmbJwHRA7aS/c=
 github.com/xxxsen/s3verify v0.0.5 h1:aR8pPRl9HlWdc5dt3X9CMaCLwtArr3GyYBsOs9CxM5o=
 github.com/xxxsen/s3verify v0.0.5/go.mod h1:Qz7tlWxAoJVi+Dw9b1X//TX4yRcuKePj+FG/Xg7W5m4=
 go.uber.org/atomic v1.7.0 h1:ADUqmZGgLDDfbSL9ZmPxKTybcoEYHgpYfELNoN+7hsw=

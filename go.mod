@@ -4,7 +4,7 @@ go 1.24.0
 
 toolchain go1.24.2
 
-require github.com/xxxsen/common v0.1.28
+require github.com/xxxsen/common v0.1.29
 
 require (
 	github.com/bytedance/sonic v1.11.6 // indirect
