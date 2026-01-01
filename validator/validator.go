@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"sync/atomic"
 	"time"
-	"ts-derp-verifier/tailscale"
+
+	"github.com/xxxsen/ts-derp-verifier/tailscale"
 
 	"github.com/samber/lo"
 	"github.com/xxxsen/common/logutil"

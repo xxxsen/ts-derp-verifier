@@ -1,4 +1,4 @@
-module ts-derp-verifier
+module github.com/xxxsen/ts-derp-verifier
 
 go 1.24.0
 

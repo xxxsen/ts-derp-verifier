@@ -6,12 +6,11 @@ import (
 	"log"
 	"time"
 
-	"ts-derp-verifier/config"
-	"ts-derp-verifier/server"
-	"ts-derp-verifier/tailscale"
-	"ts-derp-verifier/validator"
-
 	"github.com/xxxsen/common/logger"
+	"github.com/xxxsen/ts-derp-verifier/config"
+	"github.com/xxxsen/ts-derp-verifier/server"
+	"github.com/xxxsen/ts-derp-verifier/tailscale"
+	"github.com/xxxsen/ts-derp-verifier/validator"
 	"go.uber.org/zap"
 )
 

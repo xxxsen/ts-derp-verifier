@@ -5,11 +5,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"ts-derp-verifier/model"
-
 	"github.com/gin-gonic/gin"
 	"github.com/xxxsen/common/logutil"
 	"github.com/xxxsen/common/webapi"
+	"github.com/xxxsen/ts-derp-verifier/model"
 	"go.uber.org/zap"
 )
 
