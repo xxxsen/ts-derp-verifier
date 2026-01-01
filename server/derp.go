@@ -55,6 +55,7 @@ func (s *VerifyServer) verifyHandler(c *gin.Context) {
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
+	logutil.GetLogger(c).Info("client verify finish", zap.String("node_public", req.NodePublic.String()), zap.Bool("result", allow))
 	resp := &model.DERPAdmitClientResponse{Allow: allow}
 	c.JSON(http.StatusOK, resp)
 }
