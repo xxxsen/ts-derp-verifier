@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strings"
+	"sync"
 	"time"
 )
 
@@ -40,15 +42,20 @@ type listDevicesResponse struct {
 type Client struct {
 	baseURL    string
 	tailnet    string
-	apiKey     string
+	clientID   string
+	secret     string
 	httpClient *http.Client
+	mu         sync.Mutex
+	token      string
+	expiresAt  time.Time
 }
 
-func NewClient(tailnet, apiKey string) *Client {
+func NewClient(tailnet, clientID, clientSecret string) *Client {
 	return &Client{
-		baseURL: "https://api.tailscale.com",
-		tailnet: tailnet,
-		apiKey:  apiKey,
+		baseURL:  "https://api.tailscale.com",
+		tailnet:  tailnet,
+		clientID: clientID,
+		secret:   clientSecret,
 		httpClient: &http.Client{
 			Timeout: 20 * time.Second,
 		},
@@ -56,12 +63,16 @@ func NewClient(tailnet, apiKey string) *Client {
 }
 
 func (c *Client) ListDevices(ctx context.Context) ([]*Device, error) {
+	token, err := c.getToken(ctx)
+	if err != nil {
+		return nil, err
+	}
 	path := fmt.Sprintf("/api/v2/tailnet/%s/devices", url.PathEscape(c.tailnet))
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, c.baseURL+path, nil)
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Set("Authorization", "Bearer "+c.apiKey)
+	req.Header.Set("Authorization", "Bearer "+token)
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return nil, err
@@ -82,4 +93,48 @@ func (c *Client) ListDevices(ctx context.Context) ([]*Device, error) {
 		return nil, err
 	}
 	return payload.Devices, nil
+}
+
+type tokenResponse struct {
+	AccessToken string `json:"access_token"`
+	ExpiresIn   int64  `json:"expires_in"`
+}
+
+func (c *Client) getToken(ctx context.Context) (string, error) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if c.token != "" && time.Now().Before(c.expiresAt) {
+		return c.token, nil
+	}
+	form := url.Values{}
+	form.Set("grant_type", "client_credentials")
+	form.Set("client_id", c.clientID)
+	form.Set("client_secret", c.secret)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.baseURL+"/api/v2/oauth/token", strings.NewReader(form.Encode()))
+	if err != nil {
+		return "", err
+	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("oauth token request failed: status %s", resp.Status)
+	}
+	var payload tokenResponse
+	if err := json.NewDecoder(resp.Body).Decode(&payload); err != nil {
+		return "", err
+	}
+	if payload.AccessToken == "" {
+		return "", fmt.Errorf("oauth token response missing access_token")
+	}
+	if payload.ExpiresIn <= 0 {
+		payload.ExpiresIn = 3600
+	}
+	payload.ExpiresIn = payload.ExpiresIn * 3 / 4
+	c.token = payload.AccessToken
+	c.expiresAt = time.Now().Add(time.Duration(payload.ExpiresIn) * time.Second)
+	return c.token, nil
 }

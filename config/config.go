@@ -10,7 +10,8 @@ import (
 
 type Config struct {
 	Tailnet         string           `json:"tailnet"`
-	APIKey          string           `json:"api_key"`
+	ClientID        string           `json:"client_id"`
+	ClientSecret    string           `json:"client_secret"`
 	Listen          string           `json:"listen"`
 	RefreshInterval int64            `json:"refresh_interval"`
 	Log             logger.LogConfig `json:"log"`
@@ -25,8 +26,8 @@ func Load(f string) (*Config, error) {
 	if err := json.Unmarshal(raw, cfg); err != nil {
 		return nil, err
 	}
-	if cfg.Tailnet == "" || cfg.APIKey == "" {
-		return cfg, errors.New("tailnet and tskey are required")
+	if cfg.Tailnet == "" || cfg.ClientID == "" || cfg.ClientSecret == "" {
+		return cfg, errors.New("tailnet, client_id and client_secret are required")
 	}
 	if cfg.Listen == "" {
 		cfg.Listen = ":8080"

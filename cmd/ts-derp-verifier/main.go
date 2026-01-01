@@ -27,7 +27,7 @@ func main() {
 
 	logkit := logger.Init(c.Log.File, c.Log.Level, int(c.Log.FileCount), int(c.Log.FileSize), int(c.Log.KeepDays), c.Log.Console)
 
-	ts := tailscale.NewClient(c.Tailnet, c.APIKey)
+	ts := tailscale.NewClient(c.Tailnet, c.ClientID, c.ClientSecret)
 	verifier, err := validator.NewTailscaleVerifier(ts, time.Duration(c.RefreshInterval)*time.Second)
 	if err != nil {
 		logkit.Fatal("init verifier failed", zap.Error(err))
