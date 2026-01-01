@@ -49,7 +49,7 @@ services:
     expose:
       - 8080
     volumes:
-      - ./config:/config # 挂在配置目录
+      - ./config:/config # 挂载配置目录
     command: --config=/config/config.json # 指定配置文件启动
 ```
 
