@@ -22,7 +22,7 @@ func Load(f string) (*Config, error) {
 		return nil, err
 	}
 	cfg := &Config{}
-	if err := json.Unmarshal(raw, &cfg); err != nil {
+	if err := json.Unmarshal(raw, cfg); err != nil {
 		return nil, err
 	}
 	if cfg.Tailnet == "" || cfg.APIKey == "" {

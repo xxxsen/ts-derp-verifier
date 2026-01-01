@@ -3,6 +3,7 @@ package validator
 import (
 	"context"
 	"fmt"
+	"strings"
 	"sync/atomic"
 	"time"
 
@@ -16,7 +17,7 @@ import (
 type TailscaleVerifier struct {
 	client   *tailscale.Client
 	interval time.Duration
-	res      atomic.Value
+	res      atomic.Value //map[string]struct{}
 }
 
 func NewTailscaleVerifier(c *tailscale.Client, interval time.Duration) (*TailscaleVerifier, error) {
@@ -56,9 +57,18 @@ func (s *TailscaleVerifier) readOnce() error {
 	}
 	logutil.GetLogger(ctx).Debug("read devices success", zap.Int("device_count", len(res)))
 	for _, item := range res {
-		logutil.GetLogger(ctx).Debug("recv device", zap.Bool("authorized", item.Authorized), zap.String("node_public", item.NodeKey))
+		logutil.GetLogger(ctx).Debug("recv device",
+			zap.String("id", item.ID),
+			zap.String("name", item.Name),
+			zap.Bool("authorized", item.Authorized),
+			zap.String("node_public", item.NodeKey),
+			zap.String("client_version", item.ClientVersion),
+		)
 	}
-	s.res.Store(res)
+	m := lo.SliceToMap(res, func(item *tailscale.Device) (string, struct{}) {
+		return strings.TrimPrefix(item.NodeKey, "nodekey:"), struct{}{}
+	})
+	s.res.Store(m)
 	return nil
 }
 
@@ -67,8 +77,14 @@ func (s *TailscaleVerifier) Verify(node string) (bool, error) {
 	if res == nil {
 		return false, fmt.Errorf("devices data not init")
 	}
-	devs := res.([]*tailscale.Device)
-	return lo.ContainsBy(devs, func(dev *tailscale.Device) bool {
-		return dev.Authorized == true && dev.NodeKey == node
-	}), nil
+	devs := res.(map[string]struct{})
+	node = normalizeNodeKey(node)
+	if _, ok := devs[node]; ok {
+		return true, nil
+	}
+	return false, nil
+}
+
+func normalizeNodeKey(key string) string {
+	return strings.TrimPrefix(key, "nodekey:")
 }

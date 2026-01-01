@@ -10,8 +10,27 @@ import (
 )
 
 type Device struct {
-	NodeKey    string `json:"nodeKey"`
-	Authorized bool   `json:"authorized"`
+	Addresses                 []string `json:"addresses"`
+	ID                        string   `json:"id"`
+	NodeID                    string   `json:"nodeId"`
+	User                      string   `json:"user"`
+	Name                      string   `json:"name"`
+	Hostname                  string   `json:"hostname"`
+	ClientVersion             string   `json:"clientVersion"`
+	UpdateAvailable           bool     `json:"updateAvailable"`
+	OS                        string   `json:"os"`
+	Created                   string   `json:"created"`
+	ConnectedToControl        bool     `json:"connectedToControl"`
+	LastSeen                  string   `json:"lastSeen"`
+	Expires                   string   `json:"expires"`
+	KeyExpiryDisabled         bool     `json:"keyExpiryDisabled"`
+	Authorized                bool     `json:"authorized"`
+	IsExternal                bool     `json:"isExternal"`
+	MachineKey                string   `json:"machineKey"`
+	NodeKey                   string   `json:"nodeKey"`
+	TailnetLockKey            string   `json:"tailnetLockKey"`
+	BlocksIncomingConnections bool     `json:"blocksIncomingConnections"`
+	TailnetLockError          string   `json:"tailnetLockError"`
 }
 
 type listDevicesResponse struct {
